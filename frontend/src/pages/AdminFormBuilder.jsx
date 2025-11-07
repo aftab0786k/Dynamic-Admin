@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = 'https://dynamic-admin.onrender.com';
 const fieldTypes = ['text','textarea','number','email','date','checkbox','radio','select','file'];
 
 function blankField(overrides = {}) {

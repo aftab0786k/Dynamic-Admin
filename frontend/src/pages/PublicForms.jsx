@@ -1,7 +1,7 @@
 // src/components/PublicForm.jsx
 import React, { useEffect, useState } from 'react';
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = 'https://dynamic-admin.onrender.com';
 
 function FieldInput({ field, value, onChange }) {
   const commonProps = {

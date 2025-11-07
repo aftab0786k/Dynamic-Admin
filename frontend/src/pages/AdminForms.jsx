@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = 'https://dynamic-admin.onrender.com';
 
 export default function AdminForms() {
   const [forms, setForms] = useState([]);

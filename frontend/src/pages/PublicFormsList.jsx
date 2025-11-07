@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
-const API_BASE = "http://localhost:5000";
+const API_BASE = "https://dynamic-admin.onrender.com";
 
 export default function PublicFormsList() {
   const [forms, setForms] = useState([]);
