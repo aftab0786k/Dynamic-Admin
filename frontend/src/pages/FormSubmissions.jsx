@@ -11,14 +11,12 @@ export default function FormSubmissions() {
   const [formInfo, setFormInfo] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [token, setToken] = useState(() => localStorage.getItem("ADMIN_TOKEN") || "");
-
   useEffect(() => {
     if (!id) return;
-    if (token) loadAll();
-    else loadFormOnly();
+    // always load both form and submissions (no admin token required)
+    loadAll();
     // eslint-disable-next-line
-  }, [id, token]);
+  }, [id]);
 
   async function loadFormOnly() {
     // still show form title/desc even without token
@@ -34,10 +32,10 @@ export default function FormSubmissions() {
     setLoading(true);
     setError(null);
     try {
-      // fetch form meta too
+      // fetch form meta and submissions
       const [fRes, sRes] = await Promise.all([
         fetch(`${API_BASE}/forms/${id}`),
-        fetch(`${API_BASE}/admin/forms/${id}/submissions`, { headers: { "x-admin-token": token } })
+        fetch(`${API_BASE}/admin/forms/${id}/submissions`)
       ]);
 
       if (fRes.ok) {
@@ -46,7 +44,6 @@ export default function FormSubmissions() {
       }
 
       if (!sRes.ok) {
-        if (sRes.status === 401) throw new Error("Unauthorized — admin token required or invalid.");
         throw new Error("Failed to fetch submissions");
       }
 
@@ -71,22 +68,14 @@ export default function FormSubmissions() {
           </div>
           <div className="flex gap-2">
             <button onClick={() => navigate(-1)} className="px-3 py-1 border rounded">Back</button>
-            <input className="px-2 py-1 border rounded text-sm" placeholder="Admin token" value={token} onChange={(e)=> setToken(e.target.value)} />
-            <button onClick={() => { localStorage.setItem("ADMIN_TOKEN", token); alert("Token saved"); if (token) loadAll(); }} className="px-3 py-1 bg-indigo-600 text-white rounded">Save token</button>
           </div>
         </div>
 
         {error && <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded mb-4">{error}</div>}
 
-        {!token && (
-          <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 p-3 rounded mb-4">
-            Admin token not found. Provide admin token to view submissions (save to localStorage or input above).
-          </div>
-        )}
-
         {loading && <div className="py-6 text-center">Loading submissions...</div>}
 
-        {!loading && submissions.length === 0 && token && <div className="text-center text-gray-500 py-6">No submissions yet.</div>}
+  {!loading && submissions.length === 0 && <div className="text-center text-gray-500 py-6">No submissions yet.</div>}
 
         {!loading && submissions.length > 0 && (
           <div className="space-y-4">

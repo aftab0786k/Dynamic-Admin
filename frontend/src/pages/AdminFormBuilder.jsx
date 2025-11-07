@@ -123,7 +123,7 @@ export default function AdminFormBuilder() {
   const navigate = typeof useNavigate === 'function' ? useNavigate() : null;
   const formId = params?.id || null;
 
-  const [token, setToken] = useState(() => localStorage.getItem('ADMIN_TOKEN') || '');
+  // admin endpoints are public
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [fields, setFields] = useState([]);
@@ -140,7 +140,7 @@ export default function AdminFormBuilder() {
   async function loadForm(id) {
     setLoading(true); setError(null);
     try {
-      const res = await fetch(`${API_BASE}/admin/forms/${id}`, { headers: token ? { 'x-admin-token': token } : {} });
+      const res = await fetch(`${API_BASE}/admin/forms/${id}`);
       if (!res.ok) throw new Error('Load failed');
       const data = await res.json();
       setTitle(data.title || '');
@@ -201,9 +201,8 @@ export default function AdminFormBuilder() {
     try {
       const url = formId ? `${API_BASE}/admin/forms/${formId}` : `${API_BASE}/admin/forms`;
       const method = formId ? 'PUT' : 'POST';
-      const headers = { 'Content-Type': 'application/json' };
-      if (token) headers['x-admin-token'] = token;
-      const res = await fetch(url, { method, headers, body: JSON.stringify(payload) });
+  const headers = { 'Content-Type': 'application/json' };
+  const res = await fetch(url, { method, headers, body: JSON.stringify(payload) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || JSON.stringify(data));
       setSuccess('Saved successfully');
@@ -223,12 +222,10 @@ export default function AdminFormBuilder() {
         <div className="flex items-center justify-between mb-6 gap-4">
           <div>
             <h1 className="text-2xl font-semibold">Admin — Form Builder</h1>
-            <p className="text-sm text-gray-500">Create or edit forms. Data saved to backend endpoints (admin protected).</p>
+            <p className="text-sm text-gray-500">Create or edit forms. Data saved to backend endpoints.</p>
           </div>
           <div className="flex gap-2">
-            <input placeholder="Admin token" className="px-3 py-2 border rounded" value={token}
-              onChange={e => { setToken(e.target.value); localStorage.setItem('ADMIN_TOKEN', e.target.value); }} />
-            <button onClick={() => { localStorage.setItem('ADMIN_TOKEN', token); alert('Token saved'); }} className="px-3 py-2 bg-indigo-600 text-white rounded">Save token</button>
+            {/* Admin token removed — admin routes are public now */}
           </div>
         </div>
 

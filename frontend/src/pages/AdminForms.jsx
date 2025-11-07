@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'; // optional, only if you use rea
 const API_BASE = 'http://localhost:5000';
 
 export default function AdminForms() {
-  const [token, setToken] = useState(() => localStorage.getItem('ADMIN_TOKEN') || '');
+  // admin endpoints are public now
   const [forms, setForms] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -23,9 +23,7 @@ export default function AdminForms() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/admin/forms`, {
-        headers: token ? { 'x-admin-token': token } : {}
-      });
+      const res = await fetch(`${API_BASE}/admin/forms`);
       if (!res.ok) {
         const txt = await res.text();
         throw new Error(`Failed: ${res.status} ${txt}`);
@@ -41,11 +39,10 @@ export default function AdminForms() {
 
   async function handleDelete(id) {
     if (!confirm('Delete this form?')) return;
-    if (!token) return alert('Admin token required to delete');
     try {
       const res = await fetch(`${API_BASE}/admin/forms/${id}`, {
         method: 'DELETE',
-        headers: { 'x-admin-token': token }
+        // no auth header
       });
       if (!res.ok) {
         const txt = await res.text();
@@ -68,13 +65,7 @@ export default function AdminForms() {
           </div>
 
           <div className="flex gap-2 items-center">
-            <input
-              placeholder="Admin token (x-admin-token)"
-              className="px-3 py-2 border rounded text-sm"
-              value={token}
-              onChange={e => { setToken(e.target.value); localStorage.setItem('ADMIN_TOKEN', e.target.value); }}
-            />
-            <button onClick={() => { localStorage.setItem('ADMIN_TOKEN', token); alert('Token saved'); }} className="px-3 py-2 bg-indigo-600 text-white rounded">Save token</button>
+              {/* Admin token removed — admin routes are public now */}
             <button onClick={fetchForms} className="px-3 py-2 border rounded">Refresh</button>
             {navigate && <button onClick={() => navigate('/admin/new')} className="px-3 py-2 bg-green-600 text-white rounded">New Form</button>}
           </div>
